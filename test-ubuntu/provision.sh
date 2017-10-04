@@ -1,25 +1,28 @@
 apt-get update
 apt-get install -y nginx
+service nginx start
 apt-get install -y git
 
 echo "
 server {
     listen 80;
     location / {
-        proxy_pass http://localhost:5123;
+        proxy_pass http://localhost:5000;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection keep-alive;
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
     }
 }
-" > /etc/nginx/sites-available/default 
+" > /etc/nginx/sites-available/default
 echo '#############'
 echo '/etc/nginx/sites-available/default:'
-cat /etc/nginx/sites-available/default 
+cat /etc/nginx/sites-available/default
 
-service nginx start
+nginx -t
+nginx -s reload
+
 
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
